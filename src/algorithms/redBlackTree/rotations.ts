@@ -48,9 +48,7 @@ export function rotateLeft(tree: RedBlackTree, x: RBNode): RotationResult {
   x.parent = y;
 
   // 4. Update tree statistics
-  const stats = tree.getStatistics();
-  stats.rotations++;
-  stats.leftRotations++;
+  tree.recordRotation('LEFT');
 
   return {
     type: 'LEFT',
@@ -100,9 +98,7 @@ export function rotateRight(tree: RedBlackTree, y: RBNode): RotationResult {
   y.parent = x;
 
   // 4. Update tree statistics
-  const stats = tree.getStatistics();
-  stats.rotations++;
-  stats.rightRotations++;
+  tree.recordRotation('RIGHT');
 
   return {
     type: 'RIGHT',
