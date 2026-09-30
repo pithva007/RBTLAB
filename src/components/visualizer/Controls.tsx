@@ -5,6 +5,7 @@ import {
   SkipBack,
   SkipForward,
   RotateCcw,
+  ChevronsRight,
   Undo2,
   Redo2,
   Sparkles,
@@ -28,6 +29,8 @@ interface ControlsProps {
   onPause: () => void;
   onStepNext: () => void;
   onStepPrev: () => void;
+  onRestart?: () => void;
+  onSkipToEnd?: () => void;
   hasPrevStep: boolean;
   hasNextStep: boolean;
   currentStep: number;
@@ -56,6 +59,8 @@ export const Controls: React.FC<ControlsProps> = ({
   onPause,
   onStepNext,
   onStepPrev,
+  onRestart,
+  onSkipToEnd,
   hasPrevStep,
   hasNextStep,
   currentStep,
@@ -171,8 +176,19 @@ export const Controls: React.FC<ControlsProps> = ({
 
       {/* Middle Row: Playback & Step Controls */}
       <div className="flex flex-wrap items-center justify-between gap-4 p-3 rounded-lg border border-[#182032] bg-[#090d16]">
-        {/* Play / Step Buttons */}
-        <div className="flex items-center gap-2">
+        {/* Play / Step Buttons: Restart, Prev, Play/Pause, Next, Skip to End */}
+        <div className="flex items-center gap-1.5 flex-wrap">
+          {onRestart && (
+            <button
+              onClick={onRestart}
+              disabled={totalSteps === 0 || currentStep === 0}
+              className="p-1.5 rounded-md bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 disabled:opacity-30 transition-colors"
+              title="Restart from beginning"
+            >
+              <RotateCcw size={14} />
+            </button>
+          )}
+
           <button
             onClick={onStepPrev}
             disabled={!hasPrevStep}
@@ -193,7 +209,7 @@ export const Controls: React.FC<ControlsProps> = ({
           ) : (
             <button
               onClick={onPlay}
-              disabled={!hasNextStep}
+              disabled={!hasNextStep && totalSteps > 0 && currentStep >= totalSteps - 1 ? false : !hasNextStep && totalSteps === 0}
               className="px-3 py-1.5 rounded-md bg-blue-600 hover:bg-blue-500 disabled:opacity-40 text-white text-xs font-semibold flex items-center gap-1.5 shadow-md shadow-blue-950/40 transition-colors"
             >
               <Play size={14} />
@@ -210,14 +226,61 @@ export const Controls: React.FC<ControlsProps> = ({
             <SkipForward size={15} />
           </button>
 
+          {onSkipToEnd && (
+            <button
+              onClick={onSkipToEnd}
+              disabled={totalSteps === 0 || currentStep >= totalSteps - 1}
+              className="p-1.5 rounded-md bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 disabled:opacity-30 transition-colors"
+              title="Skip to end"
+            >
+              <ChevronsRight size={15} />
+            </button>
+          )}
+
           <span className="text-xs font-mono text-slate-400 ml-2">
             Step {totalSteps > 0 ? currentStep + 1 : 0} / {totalSteps}
           </span>
         </div>
 
-        {/* Speed Slider */}
-        <div className="flex items-center gap-3">
-          <span className="text-xs text-slate-400 font-medium">Speed:</span>
+        {/* Speed Controls: SLOW (1200ms) / NORMAL (700ms) / FAST (300ms) + Slider */}
+        <div className="flex items-center gap-2 flex-wrap">
+          <span className="text-xs text-slate-400 font-medium mr-1">Speed:</span>
+          <div className="flex items-center rounded-lg border border-[#222b40] bg-[#111624] p-0.5 text-[11px] font-mono">
+            <button
+              type="button"
+              onClick={() => onSpeedChange(1200)}
+              className={`px-2 py-0.5 rounded transition-colors ${
+                speedMs >= 1000
+                  ? 'bg-blue-600 text-white font-bold'
+                  : 'text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              SLOW
+            </button>
+            <button
+              type="button"
+              onClick={() => onSpeedChange(700)}
+              className={`px-2 py-0.5 rounded transition-colors ${
+                speedMs >= 500 && speedMs < 1000
+                  ? 'bg-blue-600 text-white font-bold'
+                  : 'text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              NORMAL
+            </button>
+            <button
+              type="button"
+              onClick={() => onSpeedChange(300)}
+              className={`px-2 py-0.5 rounded transition-colors ${
+                speedMs < 500
+                  ? 'bg-blue-600 text-white font-bold'
+                  : 'text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              FAST
+            </button>
+          </div>
+
           <input
             type="range"
             min="100"
@@ -225,9 +288,9 @@ export const Controls: React.FC<ControlsProps> = ({
             step="100"
             value={speedMs}
             onChange={(e) => onSpeedChange(parseInt(e.target.value, 10))}
-            className="w-24 accent-red-500 h-1.5 bg-slate-800 rounded-lg cursor-pointer"
+            className="w-20 accent-red-500 h-1.5 bg-slate-800 rounded-lg cursor-pointer"
           />
-          <span className="text-xs font-mono text-slate-400 w-12 text-right">
+          <span className="text-xs font-mono text-slate-400 w-10 text-right">
             {(speedMs / 1000).toFixed(1)}s
           </span>
         </div>
