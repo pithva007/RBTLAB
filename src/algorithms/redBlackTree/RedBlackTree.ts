@@ -174,6 +174,19 @@ export class RedBlackTree {
     return { ...this.statistics };
   }
 
+  public recordRotation(type: 'LEFT' | 'RIGHT'): void {
+    this.statistics.rotations++;
+    if (type === 'LEFT') {
+      this.statistics.leftRotations++;
+    } else {
+      this.statistics.rightRotations++;
+    }
+  }
+
+  public recordRecoloring(count = 1): void {
+    this.statistics.recolorings += count;
+  }
+
   public getStatistics(): TreeStatistics {
     this.updateStatistics();
     return { ...this.statistics };
