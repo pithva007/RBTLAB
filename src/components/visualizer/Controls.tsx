@@ -109,6 +109,15 @@ export const Controls: React.FC<ControlsProps> = ({
               type="number"
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault();
+                  if (isValidNum) {
+                    onInsert(parsedVal);
+                    setInputValue('');
+                  }
+                }
+              }}
               placeholder="Enter node key (e.g. 45)..."
               className="w-full px-3 py-1.5 rounded-lg border border-[#222b40] bg-[#111624] text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-red-500 font-mono transition-colors"
             />
