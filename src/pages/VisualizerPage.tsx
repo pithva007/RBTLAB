@@ -35,6 +35,7 @@ export const VisualizerPage: React.FC = () => {
 
   // History hook for undo/redo
   const {
+    history,
     canUndo,
     canRedo,
     pushEntry,
@@ -54,13 +55,21 @@ export const VisualizerPage: React.FC = () => {
   }, [speedMs]);
 
   // Load a sequence of events into the playback engine
-  const loadEvents = useCallback((newEvents: AlgorithmEvent[]) => {
+  const loadEvents = useCallback((newEvents: AlgorithmEvent[], autoPlay: boolean = false) => {
     engineRef.current.stop();
     setIsPlaying(false);
     setEvents(newEvents);
     setStepIndex(0);
     engineRef.current.setEvents(newEvents);
-  }, []);
+
+    if (autoPlay && newEvents.length > 1) {
+      setIsPlaying(true);
+      engineRef.current.play(
+        (event) => applyEvent(event),
+        () => setIsPlaying(false)
+      );
+    }
+  }, [applyEvent]);
 
   // Active event & snapshot
   const currentEvent = events[stepIndex] || null;
@@ -70,23 +79,28 @@ export const VisualizerPage: React.FC = () => {
 
   // Operation Handlers
   const handleInsert = (value: number) => {
+    if (engineRef.current.isPlaying()) {
+      engineRef.current.stop();
+      setIsPlaying(false);
+    }
     const generatedEvents = generateInsertEvents(treeRef.current, value);
-    // Apply changes to the live tree
-    treeRef.current.insert(value);
     pushEntry('INSERT', `INSERT ${value}`, treeRef.current.getState(), treeRef.current.getStatistics(), value);
-    loadEvents(generatedEvents);
+    loadEvents(generatedEvents, true);
   };
 
   const handleDelete = (value: number) => {
+    if (engineRef.current.isPlaying()) {
+      engineRef.current.stop();
+      setIsPlaying(false);
+    }
     const generatedEvents = generateDeleteEvents(treeRef.current, value);
-    treeRef.current.delete(value);
     pushEntry('DELETE', `DELETE ${value}`, treeRef.current.getState(), treeRef.current.getStatistics(), value);
-    loadEvents(generatedEvents);
+    loadEvents(generatedEvents, true);
   };
 
   const handleSearch = (value: number) => {
     const generatedEvents = generateSearchEvents(treeRef.current, value);
-    loadEvents(generatedEvents);
+    loadEvents(generatedEvents, true);
   };
 
   const handleReset = () => {
@@ -145,6 +159,10 @@ export const VisualizerPage: React.FC = () => {
   // Playback Controls
   const handlePlay = () => {
     if (events.length === 0) return;
+    if (stepIndex >= events.length - 1) {
+      setStepIndex(0);
+      engineRef.current.reset();
+    }
     setIsPlaying(true);
     engineRef.current.play(
       (event) => applyEvent(event),
@@ -174,9 +192,16 @@ export const VisualizerPage: React.FC = () => {
     handlePause();
     const prevEntry = undo();
     if (prevEntry) {
-      // Rebuild tree from history
       treeRef.current.clear();
-      // If the entry has snapshot, we can display it directly
+      const targetIndex = history.indexOf(prevEntry);
+      for (let i = 1; i <= targetIndex; i++) {
+        const item = history[i];
+        if (item.operation === 'INSERT' && item.value !== undefined) {
+          treeRef.current.insert(item.value);
+        } else if (item.operation === 'DELETE' && item.value !== undefined) {
+          treeRef.current.delete(item.value);
+        }
+      }
       setEvents([]);
       setStepIndex(0);
     }
@@ -186,6 +211,16 @@ export const VisualizerPage: React.FC = () => {
     handlePause();
     const nextEntry = redo();
     if (nextEntry) {
+      treeRef.current.clear();
+      const targetIndex = history.indexOf(nextEntry);
+      for (let i = 1; i <= targetIndex; i++) {
+        const item = history[i];
+        if (item.operation === 'INSERT' && item.value !== undefined) {
+          treeRef.current.insert(item.value);
+        } else if (item.operation === 'DELETE' && item.value !== undefined) {
+          treeRef.current.delete(item.value);
+        }
+      }
       setEvents([]);
       setStepIndex(0);
     }
