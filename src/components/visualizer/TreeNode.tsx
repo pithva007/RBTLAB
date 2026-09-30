@@ -18,10 +18,10 @@ export const TreeNode: React.FC<TreeNodeProps> = ({
   const roleConfig: Record<string, { label: string; bg: string; border: string; text: string }> = {
     current: { label: 'CURRENT', bg: '#0284c7', border: '#38bdf8', text: '#ffffff' },
     parent: { label: 'PARENT', bg: '#d97706', border: '#fbbf24', text: '#ffffff' },
-    grandparent: { label: 'GP', bg: '#9333ea', border: '#c084fc', text: '#ffffff' },
+    grandparent: { label: 'GRANDPARENT', bg: '#9333ea', border: '#c084fc', text: '#ffffff' },
     uncle: { label: 'UNCLE', bg: '#059669', border: '#34d399', text: '#ffffff' },
     sibling: { label: 'SIBLING', bg: '#4f46e5', border: '#818cf8', text: '#ffffff' },
-    successor: { label: 'SUCC', bg: '#0d9488', border: '#2dd4bf', text: '#ffffff' },
+    successor: { label: 'SUCCESSOR', bg: '#0d9488', border: '#2dd4bf', text: '#ffffff' },
   };
 
   const activeRole = role !== 'normal' ? roleConfig[role] : null;
@@ -81,16 +81,28 @@ export const TreeNode: React.FC<TreeNodeProps> = ({
     >
       {/* Outer Glow Ring for Roles */}
       {activeRole && (
-        <circle
-          cx={0}
-          cy={0}
-          r={radius + 6}
-          fill="none"
-          stroke={activeRole.border}
-          strokeWidth={2.5}
-          strokeDasharray="4 2"
-          className="animate-spin-slow opacity-80"
-        />
+        <>
+          <circle
+            cx={0}
+            cy={0}
+            r={radius + 8}
+            fill="none"
+            stroke={activeRole.border}
+            strokeWidth={2}
+            opacity={0.35}
+            className="animate-ping"
+          />
+          <circle
+            cx={0}
+            cy={0}
+            r={radius + 5}
+            fill="none"
+            stroke={activeRole.border}
+            strokeWidth={2.5}
+            strokeDasharray="4 2"
+            className="animate-spin-slow opacity-90"
+          />
+        </>
       )}
 
       {/* Main Node Circle */}
@@ -143,20 +155,21 @@ export const TreeNode: React.FC<TreeNodeProps> = ({
 
       {/* Role Tag Label */}
       {activeRole && (
-        <g transform={`translate(0, ${radius + 12})`}>
+        <g transform={`translate(0, ${radius + 13})`}>
           <rect
-            x={-24}
+            x={-(activeRole.label.length * 3.4 + 6)}
             y={-7}
-            width={48}
-            height={14}
+            width={activeRole.label.length * 6.8 + 12}
+            height={15}
             rx={3}
             fill={activeRole.bg}
             stroke={activeRole.border}
-            strokeWidth={1}
+            strokeWidth={1.2}
+            filter="drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5))"
           />
           <text
             x={0}
-            y={3}
+            y={3.5}
             textAnchor="middle"
             fontSize="8"
             fontFamily="JetBrains Mono, monospace"
