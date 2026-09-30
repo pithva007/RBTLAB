@@ -1,6 +1,7 @@
 import { RBNode } from './RBNode';
 import { TreeStatistics, SerializedRBNode } from './types';
 import { insert, insertWithTrace, InsertResult } from './insertion';
+import { deleteNode, deleteWithTrace, DeleteResult } from './deletion';
 
 export class RedBlackTree {
   public root: RBNode | null = null;
@@ -49,6 +50,14 @@ export class RedBlackTree {
 
   public insertWithTrace(value: number): InsertResult {
     return insertWithTrace(this, value);
+  }
+
+  public delete(value: number): boolean {
+    return deleteNode(this, value);
+  }
+
+  public deleteWithTrace(value: number): DeleteResult {
+    return deleteWithTrace(this, value);
   }
 
   public search(value: number): {
