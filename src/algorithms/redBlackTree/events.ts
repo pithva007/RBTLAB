@@ -11,12 +11,18 @@ import { RBNode } from './RBNode';
 
 export type AlgorithmEventType =
   | 'INSERT_START'
+  | 'TRAVERSE_COMPARE'
+  | 'MOVE_LEFT'
+  | 'MOVE_RIGHT'
   | 'BST_INSERT'
   | 'NODE_CREATED'
   | 'RED_RED_VIOLATION'
+  | 'NO_VIOLATION'
+  | 'IDENTIFY_ROLES'
   | 'IDENTIFY_UNCLE'
   | 'IDENTIFY_CASE'
   | 'RECOLOR'
+  | 'BEFORE_ROTATION'
   | 'LEFT_ROTATION'
   | 'RIGHT_ROTATION'
   | 'LEFT_RIGHT_ROTATION'
@@ -34,6 +40,7 @@ export type AlgorithmEventType =
   | 'SEARCH_STEP'
   | 'SEARCH_FOUND'
   | 'SEARCH_NOT_FOUND'
+  | 'VALIDATE_TREE'
   | 'OPERATION_COMPLETE';
 
 export interface EducationalWhy {
@@ -70,18 +77,23 @@ export interface AlgorithmEvent {
   treeSnapshot: SerializedRBNode | null;
   propertiesStatus: TreePropertiesStatus;
   statistics: TreeStatistics;
+  pseudocodeLine?: number;
+  comparison?: {
+    currentVal: number;
+    targetVal: number;
+    decision: 'LEFT' | 'RIGHT' | 'EQUAL';
+  };
 }
 
 /**
  * Generates an event stream for tree insertion with educational metadata.
+ * Directly executes on the persistent tree so each insertion builds on previous state.
  */
 export function generateInsertEvents(
   initialTree: RedBlackTree,
   value: number
 ): AlgorithmEvent[] {
-  // Clone the tree so we execute step-by-step snapshots without mutating the initial tree
-  const treeClone = initialTree.clone();
-  const insertResult = insertWithTrace(treeClone, value);
+  const insertResult = insertWithTrace(initialTree, value);
   const rawSteps = insertResult.steps;
   const total = rawSteps.length;
 
@@ -107,32 +119,71 @@ export function generateInsertEvents(
         };
         break;
 
+      case 'TRAVERSE_COMPARE':
+        eventType = 'TRAVERSE_COMPARE';
+        why = {
+          whatHappened: step.message,
+          whyDidItHappen: `Comparing target value ${value} with current BST node ${step.nodeRoles.current}.`,
+          actionReason: `Traverse tree according to binary search tree ordering (smaller keys left, larger keys right).`,
+          complexity: 'O(log n) tree search',
+        };
+        break;
+
+      case 'MOVE_LEFT':
+        eventType = 'MOVE_LEFT';
+        why = {
+          whatHappened: step.message,
+          whyDidItHappen: `${value} is strictly less than ${step.nodeRoles.current}.`,
+          actionReason: `Smaller values must reside in the left subtree. Moving traversal to left child.`,
+          complexity: 'O(1) pointer branch',
+        };
+        break;
+
+      case 'MOVE_RIGHT':
+        eventType = 'MOVE_RIGHT';
+        why = {
+          whatHappened: step.message,
+          whyDidItHappen: `${value} is strictly greater than ${step.nodeRoles.current}.`,
+          actionReason: `Larger values must reside in the right subtree. Moving traversal to right child.`,
+          complexity: 'O(1) pointer branch',
+        };
+        break;
+
       case 'BST_INSERTION':
         eventType = 'BST_INSERT';
         why = {
-          whatHappened: `Placed ${value} according to BST comparison ordering.`,
-          whyDidItHappen: `In a BST, keys in the left subtree are smaller, and right subtree are larger.`,
-          actionReason: `Establish basic binary search tree position prior to color balance checks.`,
-          complexity: 'O(1) pointer assignment after search',
+          whatHappened: step.message,
+          whyDidItHappen: `Found empty leaf position in the binary search tree.`,
+          actionReason: `Attach new node at the correct position before checking Red-Black balancing rules.`,
+          complexity: 'O(1) pointer assignment',
         };
         break;
 
       case 'NODE_CREATED':
         eventType = 'NODE_CREATED';
         why = {
-          whatHappened: `Node ${value} created with initial color RED.`,
-          whyDidItHappen: `New nodes must be RED to preserve Property 5 (equal black height) on all paths.`,
-          violatedProperty: undefined,
-          actionReason: `If colored BLACK, every path through this node would immediately violate black height equality.`,
+          whatHappened: step.message,
+          whyDidItHappen: `New nodes must initially be colored RED to preserve Property 5 (equal black height) on all paths.`,
+          actionReason: `If colored BLACK, every simple path through this node would immediately violate black height equality.`,
           complexity: 'O(1)',
+        };
+        break;
+
+      case 'NO_VIOLATION':
+        eventType = 'OPERATION_COMPLETE';
+        why = {
+          whatHappened: step.message,
+          whyDidItHappen: `Parent node is BLACK. A RED child under a BLACK parent violates no properties.`,
+          actionReason: `No restructuring or recoloring needed.`,
+          complexity: 'O(1) inspection',
         };
         break;
 
       case 'CHECK_VIOLATION':
         eventType = 'RED_RED_VIOLATION';
         why = {
-          whatHappened: `Red-Red conflict detected between ${step.nodeRoles.current} and ${step.nodeRoles.parent}.`,
-          whyDidItHappen: `Both child and parent are RED.`,
+          whatHappened: step.message,
+          whyDidItHappen: `Both child ${step.nodeRoles.current} and parent ${step.nodeRoles.parent} are RED.`,
           violatedProperty: 'Property 4: A RED node cannot have a RED child.',
           actionReason: `Consecutive red nodes are strictly forbidden in Red-Black Trees.`,
           complexity: 'O(1) inspection',
@@ -142,7 +193,7 @@ export function generateInsertEvents(
       case 'IDENTIFY_CASE':
         eventType = step.nodeRoles.uncle !== null ? 'IDENTIFY_UNCLE' : 'IDENTIFY_CASE';
         why = {
-          whatHappened: `Balancing case identified: ${step.balancingCase ?? 'Unknown'}.`,
+          whatHappened: step.message,
           whyDidItHappen: `Checked color of uncle node (${step.nodeRoles.uncle ?? 'NIL/BLACK'}) and child orientation.`,
           caseDetected: step.balancingCase,
           actionReason:
@@ -156,11 +207,22 @@ export function generateInsertEvents(
       case 'RECOLOR':
         eventType = 'RECOLOR';
         why = {
-          whatHappened: `Recolored parent and uncle to BLACK, grandparent to RED.`,
-          whyDidItHappen: `Uncle was RED (Case 1). Pushing blackness down restores local balance.`,
+          whatHappened: step.message,
+          whyDidItHappen: `Recolored nodes to restore local balance.`,
           caseDetected: step.balancingCase,
-          actionReason: `Now the grandparent is RED; rebalance must continue upwards towards the root.`,
-          complexity: 'O(1) color updates (at most O(log n) recolorings up the tree)',
+          actionReason: `Recoloring updates node color states without changing tree topology.`,
+          complexity: 'O(1) color updates',
+        };
+        break;
+
+      case 'BEFORE_ROTATION':
+        eventType = 'BEFORE_ROTATION';
+        why = {
+          whatHappened: step.message,
+          whyDidItHappen: `Subtree structure requires rotation to reduce tree height and eliminate consecutive REDs.`,
+          caseDetected: step.balancingCase,
+          actionReason: `Tree rotations change pointer hierarchy without violating the BST inorder sequence.`,
+          complexity: 'O(1)',
         };
         break;
 
@@ -171,14 +233,14 @@ export function generateInsertEvents(
           whyDidItHappen: `Restructuring tree pointers to decrease subtree height and eliminate consecutive REDs.`,
           caseDetected: step.balancingCase,
           actionReason: `Tree rotations change pointer hierarchy without violating the BST inorder sequence.`,
-          complexity: 'O(1) rotation (at most 2 rotations per insertion)',
+          complexity: 'O(1) rotation',
         };
         break;
 
       case 'ROOT_VERIFY':
         eventType = 'ROOT_VERIFY';
         why = {
-          whatHappened: `Root verified and guaranteed BLACK.`,
+          whatHappened: step.message,
           whyDidItHappen: `Red-Black Tree Property 2 mandates the root must be BLACK.`,
           violatedProperty: 'Property 2: The root is BLACK.',
           actionReason: `Recoloring root from RED to BLACK increases the black height of all paths uniformly by 1.`,
@@ -189,7 +251,7 @@ export function generateInsertEvents(
       case 'INSERTION_COMPLETE':
         eventType = 'OPERATION_COMPLETE';
         why = {
-          whatHappened: `Insertion of ${value} successfully completed.`,
+          whatHappened: step.message,
           whyDidItHappen: `All 5 Red-Black properties are satisfied.`,
           actionReason: `The tree is balanced and ready for subsequent queries or modifications.`,
           complexity: 'Total time: O(log n), at most 2 rotations',
@@ -214,8 +276,10 @@ export function generateInsertEvents(
         uncle: step.nodeRoles.uncle,
       },
       treeSnapshot: step.treeSnapshot,
-      propertiesStatus: validateTree(treeClone),
-      statistics: { ...treeClone.getStatistics() },
+      propertiesStatus: validateTree(initialTree),
+      statistics: { ...initialTree.getStatistics() },
+      pseudocodeLine: step.pseudocodeLine,
+      comparison: step.comparison,
     });
   });
 
@@ -224,13 +288,13 @@ export function generateInsertEvents(
 
 /**
  * Generates an event stream for tree deletion with educational metadata.
+ * Directly executes on initialTree so state is persistently maintained.
  */
 export function generateDeleteEvents(
   initialTree: RedBlackTree,
   value: number
 ): AlgorithmEvent[] {
-  const treeClone = initialTree.clone();
-  const deleteResult = deleteWithTrace(treeClone, value);
+  const deleteResult = deleteWithTrace(initialTree, value);
   const rawSteps = deleteResult.steps;
   const total = rawSteps.length;
 
@@ -374,8 +438,8 @@ export function generateDeleteEvents(
         successor: step.nodeRoles.successor,
       },
       treeSnapshot: step.treeSnapshot,
-      propertiesStatus: validateTree(treeClone),
-      statistics: { ...treeClone.getStatistics() },
+      propertiesStatus: validateTree(initialTree),
+      statistics: { ...initialTree.getStatistics() },
     });
   });
 
