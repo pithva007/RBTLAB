@@ -14,6 +14,8 @@ import { OperationLog } from '../components/visualizer/OperationLog';
 import { PropertyPanel } from '../components/visualizer/PropertyPanel';
 import { StatisticsPanel } from '../components/visualizer/StatisticsPanel';
 import { LearnExplainer } from '../components/learn/LearnExplainer';
+import { PseudocodePanel } from '../components/visualizer/PseudocodePanel';
+import { ExplanationPanel } from '../components/visualizer/ExplanationPanel';
 import { DatasetPresetType, generateDataset } from '../utils/datasets';
 import { LayoutNode } from '../utils/treeLayout';
 
@@ -187,6 +189,20 @@ export const VisualizerPage: React.FC = () => {
     if (prevEvent) applyEvent(prevEvent);
   };
 
+  const handleRestart = () => {
+    handlePause();
+    const firstEvent = engineRef.current.goTo(0);
+    if (firstEvent) applyEvent(firstEvent);
+  };
+
+  const handleSkipToEnd = () => {
+    handlePause();
+    if (events.length > 0) {
+      const lastEvent = engineRef.current.goTo(events.length - 1);
+      if (lastEvent) applyEvent(lastEvent);
+    }
+  };
+
   // Undo / Redo
   const handleUndo = () => {
     handlePause();
@@ -241,6 +257,8 @@ export const VisualizerPage: React.FC = () => {
         onPause={handlePause}
         onStepNext={handleStepNext}
         onStepPrev={handleStepPrev}
+        onRestart={handleRestart}
+        onSkipToEnd={handleSkipToEnd}
         hasPrevStep={engineRef.current.hasPrev()}
         hasNextStep={engineRef.current.hasNext()}
         currentStep={stepIndex}
@@ -253,20 +271,31 @@ export const VisualizerPage: React.FC = () => {
         onRedo={handleRedo}
       />
 
-      {/* Main Workspace: SVG Tree Canvas & Operation Log Terminal */}
+      {/* Main Workspace: SVG Tree Canvas, Pseudocode, Explanation, and Operation Log */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
-        {/* Tree Canvas */}
-        <div className="lg:col-span-8">
+        {/* Left Column: Tree Canvas & Algorithm Pseudocode */}
+        <div className="lg:col-span-8 space-y-4">
           <TreeCanvas
             treeSnapshot={currentSnapshot}
             highlightRoles={currentEvent?.highlightRoles ?? {}}
             onNodeClick={(node) => setSelectedNode(node)}
             showNilLeavesInitial={true}
           />
+
+          <PseudocodePanel
+            operation={currentEvent?.operation ?? 'INSERT'}
+            activeLine={currentEvent?.pseudocodeLine}
+          />
         </div>
 
-        {/* Operation Log */}
-        <div className="lg:col-span-4">
+        {/* Right Column: "WHAT IS HAPPENING?" Explanation Panel & Operation Timeline */}
+        <div className="lg:col-span-4 space-y-4">
+          <ExplanationPanel
+            currentEvent={currentEvent}
+            stepIndex={stepIndex}
+            totalSteps={events.length}
+          />
+
           <OperationLog
             events={events}
             currentStepIndex={stepIndex}
