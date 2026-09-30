@@ -100,24 +100,44 @@ export const OperationLog: React.FC<OperationLogProps> = ({
           </div>
         ) : (
           events.map((e, index) => {
-            const isActive = index === currentStepIndex;
+            const isCompleted = index < currentStepIndex;
+            const isCurrent = index === currentStepIndex;
+
             return (
               <div
                 key={e.id}
                 onClick={() => onSelectStep && onSelectStep(index)}
                 className={`p-2 rounded border cursor-pointer transition-all ${
-                  isActive
-                    ? 'active-step bg-blue-950/40 border-blue-500/50 shadow-md text-slate-100'
-                    : 'bg-[#111524]/60 border-slate-800/80 hover:bg-[#151b2e] text-slate-400'
+                  isCurrent
+                    ? 'active-step bg-blue-950/60 border-blue-500/80 shadow-md text-slate-100 ring-1 ring-blue-500/40'
+                    : isCompleted
+                    ? 'bg-[#111524]/80 border-slate-800 hover:bg-[#151b2e] text-slate-300'
+                    : 'bg-[#0c101c]/40 border-slate-900/60 opacity-40 hover:opacity-75 text-slate-500'
                 }`}
               >
                 <div className="flex items-center justify-between gap-2">
                   <div className="flex items-center gap-1.5 min-w-0">
-                    <span className="text-slate-500 text-[10px]">
-                      {String(index + 1).padStart(2, '0')}.
+                    <span className="text-slate-500 text-[10px] w-4 text-right shrink-0 select-none">
+                      {index + 1}.
                     </span>
-                    <span className="text-slate-400">→</span>
-                    <span className="font-semibold text-slate-200 truncate">
+                    <span className="w-4 text-center shrink-0 select-none">
+                      {isCompleted ? (
+                        <span className="text-emerald-400 font-bold">✓</span>
+                      ) : isCurrent ? (
+                        <span className="text-blue-400 font-bold">→</span>
+                      ) : (
+                        <span className="text-slate-600">○</span>
+                      )}
+                    </span>
+                    <span
+                      className={`truncate text-xs ${
+                        isCurrent
+                          ? 'font-bold text-white'
+                          : isCompleted
+                          ? 'font-medium text-slate-200'
+                          : 'font-normal text-slate-500'
+                      }`}
+                    >
                       {e.title}
                     </span>
                   </div>
@@ -129,7 +149,15 @@ export const OperationLog: React.FC<OperationLogProps> = ({
                     {e.type.replace(/_/g, ' ')}
                   </span>
                 </div>
-                <div className="text-[11px] text-slate-400 mt-1 leading-relaxed pl-5">
+                <div
+                  className={`text-[11px] mt-1 leading-relaxed pl-7 ${
+                    isCurrent
+                      ? 'text-slate-300'
+                      : isCompleted
+                      ? 'text-slate-400'
+                      : 'text-slate-600'
+                  }`}
+                >
                   {e.description}
                 </div>
               </div>
