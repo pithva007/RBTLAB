@@ -66,7 +66,7 @@ export function generateChallenges(): Challenge[] {
   {
     const tree2 = new RedBlackTree();
     tree2.insert(50);
-    // Tree has 50 (BLACK) -> left 30 (RED)
+    tree2.insert(30);
     // Attach 10 (RED) on left of 30. Uncle of 10 is NIL (BLACK).
     const n10 = new RBNode(10, 'RED');
     n10.parent = tree2.root!.left;
