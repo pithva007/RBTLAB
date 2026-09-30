@@ -30,6 +30,10 @@ export const TreeNode: React.FC<TreeNodeProps> = ({
     return (
       <g
         transform={`translate(${x}, ${y})`}
+        style={{
+          transform: `translate(${x}px, ${y}px)`,
+          transition: 'transform 450ms cubic-bezier(0.4, 0, 0.2, 1)',
+        }}
         className="tree-node-nil cursor-pointer transition-transform duration-300"
         aria-label="NIL sentinel leaf node (BLACK)"
       >
@@ -73,6 +77,10 @@ export const TreeNode: React.FC<TreeNodeProps> = ({
   return (
     <g
       transform={`translate(${x}, ${y})`}
+      style={{
+        transform: `translate(${x}px, ${y}px)`,
+        transition: 'transform 450ms cubic-bezier(0.4, 0, 0.2, 1), opacity 300ms ease',
+      }}
       className="tree-node group cursor-pointer transition-all duration-300 focus:outline-none"
       onClick={() => onNodeClick && onNodeClick(node)}
       tabIndex={0}
