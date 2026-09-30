@@ -78,6 +78,27 @@ export const TreeCanvas: React.FC<TreeCanvasProps> = ({
 
   const handleMouseUp = () => setIsDragging(false);
 
+  // Touch pan handlers
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (e.touches.length === 1) {
+      setIsDragging(true);
+      setDragStart({
+        x: e.touches[0].clientX - pan.x,
+        y: e.touches[0].clientY - pan.y,
+      });
+    }
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (!isDragging || e.touches.length !== 1) return;
+    setPan({
+      x: e.touches[0].clientX - dragStart.x,
+      y: e.touches[0].clientY - dragStart.y,
+    });
+  };
+
+  const handleTouchEnd = () => setIsDragging(false);
+
   // Wheel zoom
   const handleWheel = (e: React.WheelEvent) => {
     e.preventDefault();
@@ -88,11 +109,15 @@ export const TreeCanvas: React.FC<TreeCanvasProps> = ({
   return (
     <div
       ref={containerRef}
-      className="relative w-full h-[520px] rounded-xl border border-[#1e2638] bg-[#090d16] overflow-hidden select-none cursor-grab active:cursor-grabbing"
+      className="relative w-full h-[400px] sm:h-[480px] md:h-[540px] rounded-xl border border-[#1e2638] bg-[#090d16] overflow-hidden select-none cursor-grab active:cursor-grabbing touch-none"
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
       onMouseLeave={handleMouseUp}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+      onTouchCancel={handleTouchEnd}
       onWheel={handleWheel}
       role="region"
       aria-label="Interactive Red-Black Tree Canvas"
