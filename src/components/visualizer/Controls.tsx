@@ -98,8 +98,8 @@ export const Controls: React.FC<ControlsProps> = ({
     <div className="rounded-xl border border-[#1e2638] bg-[#0c101a] p-4 shadow-xl space-y-4">
       {/* Top Row: Direct Number Action Form & History */}
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <form onSubmit={handleInsert} className="flex items-center gap-2 flex-1 min-w-[280px]">
-          <div className="relative flex-1">
+        <form onSubmit={handleInsert} className="flex flex-wrap sm:flex-nowrap items-center gap-2 flex-1 min-w-0">
+          <div className="relative flex-1 min-w-[140px]">
             <input
               type="number"
               value={inputValue}
@@ -109,38 +109,40 @@ export const Controls: React.FC<ControlsProps> = ({
             />
           </div>
 
-          <button
-            type="submit"
-            disabled={!isValidNum}
-            className="px-3 py-1.5 rounded-lg bg-red-600 hover:bg-red-500 disabled:opacity-40 disabled:hover:bg-red-600 text-white text-xs font-semibold flex items-center gap-1.5 transition-colors shadow-md shadow-red-950/40"
-          >
-            <Plus size={14} />
-            <span>Insert</span>
-          </button>
+          <div className="flex items-center gap-1.5 shrink-0">
+            <button
+              type="submit"
+              disabled={!isValidNum}
+              className="px-3 py-1.5 rounded-lg bg-red-600 hover:bg-red-500 disabled:opacity-40 disabled:hover:bg-red-600 text-white text-xs font-semibold flex items-center gap-1.5 transition-colors shadow-md shadow-red-950/40"
+            >
+              <Plus size={14} />
+              <span>Insert</span>
+            </button>
 
-          <button
-            type="button"
-            onClick={handleDelete}
-            disabled={!isValidNum}
-            className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 disabled:opacity-40 text-slate-200 text-xs font-semibold flex items-center gap-1.5 border border-slate-700 transition-colors"
-          >
-            <Trash2 size={13} className="text-red-400" />
-            <span>Delete</span>
-          </button>
+            <button
+              type="button"
+              onClick={handleDelete}
+              disabled={!isValidNum}
+              className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 disabled:opacity-40 text-slate-200 text-xs font-semibold flex items-center gap-1.5 border border-slate-700 transition-colors"
+            >
+              <Trash2 size={13} className="text-red-400" />
+              <span>Delete</span>
+            </button>
 
-          <button
-            type="button"
-            onClick={handleSearch}
-            disabled={!isValidNum}
-            className="px-3 py-1.5 rounded-lg bg-blue-600/20 hover:bg-blue-600/30 border border-blue-500/30 text-blue-400 text-xs font-semibold flex items-center gap-1.5 transition-colors disabled:opacity-40"
-          >
-            <Search size={13} />
-            <span>Search</span>
-          </button>
+            <button
+              type="button"
+              onClick={handleSearch}
+              disabled={!isValidNum}
+              className="px-3 py-1.5 rounded-lg bg-blue-600/20 hover:bg-blue-600/30 border border-blue-500/30 text-blue-400 text-xs font-semibold flex items-center gap-1.5 transition-colors disabled:opacity-40"
+            >
+              <Search size={13} />
+              <span>Search</span>
+            </button>
+          </div>
         </form>
 
         {/* Undo / Redo / Reset */}
-        <div className="flex items-center gap-1.5 border-l border-[#1e2638] pl-3">
+        <div className="flex items-center gap-1.5 border-l border-[#1e2638] pl-3 shrink-0">
           <button
             onClick={onUndo}
             disabled={!canUndo}
