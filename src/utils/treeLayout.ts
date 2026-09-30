@@ -99,8 +99,26 @@ export function computeTreeLayout(
   ): { x: number; y: number; minX: number; maxX: number } {
     const y = 50 + depth * levelHeight;
 
-    const hasLeftChild = node.left && (!node.left.isNil || showNilLeaves);
-    const hasRightChild = node.right && (!node.right.isNil || showNilLeaves);
+    const hasLeftChild = Boolean(node.left) || (showNilLeaves && !node.isNil);
+    const hasRightChild = Boolean(node.right) || (showNilLeaves && !node.isNil);
+
+    const effectiveLeft: SerializedRBNode | null = node.left || (showNilLeaves && !node.isNil ? {
+      id: `nil_left_${node.id}`,
+      value: null,
+      color: 'BLACK',
+      isNil: true,
+      left: null,
+      right: null,
+    } : null);
+
+    const effectiveRight: SerializedRBNode | null = node.right || (showNilLeaves && !node.isNil ? {
+      id: `nil_right_${node.id}`,
+      value: null,
+      color: 'BLACK',
+      isNil: true,
+      left: null,
+      right: null,
+    } : null);
 
     // Leaf node or showing NIL
     if (!hasLeftChild && !hasRightChild) {
@@ -132,24 +150,24 @@ export function computeTreeLayout(
     let leftResult: { x: number; y: number } | null = null;
     let rightResult: { x: number; y: number } | null = null;
 
-    if (hasLeftChild && node.left) {
-      leftResult = layoutSubtree(node.left, depth + 1);
+    if (effectiveLeft) {
+      leftResult = layoutSubtree(effectiveLeft, depth + 1);
     }
 
     // Position current node between children, or relative to single child
     let currentX: number;
-    if (leftResult && !hasRightChild) {
+    if (leftResult && !effectiveRight) {
       currentX = nextX;
       nextX += minSpacing;
-    } else if (!leftResult && hasRightChild) {
+    } else if (!leftResult && effectiveRight) {
       currentX = nextX;
       nextX += minSpacing;
     } else {
       currentX = 0; // Will be set after right child
     }
 
-    if (hasRightChild && node.right) {
-      rightResult = layoutSubtree(node.right, depth + 1);
+    if (effectiveRight) {
+      rightResult = layoutSubtree(effectiveRight, depth + 1);
     }
 
     if (leftResult && rightResult) {
@@ -180,29 +198,29 @@ export function computeTreeLayout(
     });
 
     // Add edges
-    if (leftResult && node.left) {
+    if (leftResult && effectiveLeft) {
       edges.push({
-        id: `edge_${node.id}_to_${node.left.id}`,
+        id: `edge_${node.id}_to_${effectiveLeft.id}`,
         sourceX: currentX,
         sourceY: y + (node.isNil ? 10 : nodeRadius),
         targetX: leftResult.x,
-        targetY: leftResult.y - (node.left.isNil ? 10 : nodeRadius),
+        targetY: leftResult.y - (effectiveLeft.isNil ? 10 : nodeRadius),
         sourceId: node.id,
-        targetId: node.left.id,
-        isToNil: node.left.isNil,
+        targetId: effectiveLeft.id,
+        isToNil: effectiveLeft.isNil,
       });
     }
 
-    if (rightResult && node.right) {
+    if (rightResult && effectiveRight) {
       edges.push({
-        id: `edge_${node.id}_to_${node.right.id}`,
+        id: `edge_${node.id}_to_${effectiveRight.id}`,
         sourceX: currentX,
         sourceY: y + (node.isNil ? 10 : nodeRadius),
         targetX: rightResult.x,
-        targetY: rightResult.y - (node.right.isNil ? 10 : nodeRadius),
+        targetY: rightResult.y - (effectiveRight.isNil ? 10 : nodeRadius),
         sourceId: node.id,
-        targetId: node.right.id,
-        isToNil: node.right.isNil,
+        targetId: effectiveRight.id,
+        isToNil: effectiveRight.isNil,
       });
     }
 
