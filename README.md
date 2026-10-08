@@ -490,6 +490,6 @@ This project is open-source and licensed under the **[MIT License](LICENSE)**.
 ---
 
 <div align="center">
-  <sub>Built with ❤️ by <a href="https://khushpithva.in"><strong>Khush</strong></a> (<strong><a href="https://khushpithva.in">khushpithva.in</a></strong>) for students, software engineers, and algorithm enthusiasts.</sub><br/>
+  <sub>Built with ❤️ by <a href="https://khushpithva.in"><strong>Khush</strong></a> for students, software engineers, and algorithm enthusiasts.</sub><br/>
   <sub>Explore the live visualizer anytime at <a href="https://rbtvisuals.vercel.app"><strong>rbtvisuals.vercel.app</strong></a></sub>
 </div>
