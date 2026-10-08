@@ -70,7 +70,6 @@ The laboratory is permanently hosted on Vercel with automated CI/CD:
 | Resource | Link |
 | :--- | :--- |
 | **Production URL** | **[https://rbtvisuals.vercel.app](https://rbtvisuals.vercel.app)** |
-| **Alternative Domain** | **[http://rbtvisuals.vercel.app](http://rbtvisuals.vercel.app)** |
 | **Source Code** | **[https://github.com/pithva007/RBTLAB](https://github.com/pithva007/RBTLAB)** |
 
 ---
