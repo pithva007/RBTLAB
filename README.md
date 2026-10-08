@@ -22,6 +22,12 @@
 
 👉 **[Launch Live Visualizer at rbtvisuals.vercel.app](https://rbtvisuals.vercel.app)** 👈
 
+<br/>
+
+<p align="center">
+  <sub>Built with ❤️ by <a href="https://khushpithva.in"><strong>Khush</strong></a> (<strong><a href="https://khushpithva.in">khushpithva.in</a></strong>)</sub>
+</p>
+
 </div>
 
 ---
@@ -47,6 +53,7 @@
 - [🧪 Automated Test Suite](#-automated-test-suite)
 - [🚀 Quick Start & Local Development](#-quick-start--local-development)
 - [🛠️ Tech Stack](#️-tech-stack)
+- [👨‍💻 Author](#-author)
 - [📄 License & Acknowledgments](#-license--acknowledgments)
 
 ---
@@ -461,6 +468,16 @@ npm run preview
 
 ---
 
+## 👨‍💻 Author
+
+Built with ❤️ by **[Khush](https://khushpithva.in)**
+
+- 🌐 Personal Website: **[khushpithva.in](https://khushpithva.in)**
+- 🐙 GitHub Profile: **[@pithva007](https://github.com/pithva007)**
+- 💼 Project Repository: **[pithva007/RBTLAB](https://github.com/pithva007/RBTLAB)**
+
+---
+
 ## 📄 License & Acknowledgments
 
 This project is open-source and licensed under the **[MIT License](LICENSE)**.
@@ -473,6 +490,6 @@ This project is open-source and licensed under the **[MIT License](LICENSE)**.
 ---
 
 <div align="center">
-  <sub>Built for students, software engineers, and algorithm enthusiasts.</sub><br/>
+  <sub>Built with ❤️ by <a href="https://khushpithva.in"><strong>Khush</strong></a> (<strong><a href="https://khushpithva.in">khushpithva.in</a></strong>) for students, software engineers, and algorithm enthusiasts.</sub><br/>
   <sub>Explore the live visualizer anytime at <a href="https://rbtvisuals.vercel.app"><strong>rbtvisuals.vercel.app</strong></a></sub>
 </div>

@@ -3,10 +3,10 @@ import {
   BookOpen,
   Cpu,
   Layers,
-  Code2,
   ExternalLink,
   GraduationCap,
   ShieldCheck,
+  Heart,
 } from 'lucide-react';
 
 export const AboutPage: React.FC = () => {
@@ -111,21 +111,34 @@ export const AboutPage: React.FC = () => {
         </ul>
       </div>
 
-      {/* Repository & Source */}
-      <div className="p-4 rounded-xl border border-[#1e2638] bg-[#0c101a] flex items-center justify-between">
-        <div className="flex items-center gap-2 text-xs text-slate-400">
-          <Code2 size={16} className="text-slate-300" />
-          <span>Open-Source Algorithm Laboratory on GitHub</span>
+      {/* Repository & Creator Attribution */}
+      <div className="p-4 rounded-xl border border-[#1e2638] bg-[#0c101a] flex flex-col sm:flex-row items-center justify-between gap-3">
+        <div className="flex items-center gap-2 text-xs text-slate-300">
+          <Heart size={15} className="text-red-500 fill-red-500 shrink-0" />
+          <span>
+            Built with love by <strong className="text-white">Khush</strong> (<a href="https://khushpithva.in" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline">khushpithva.in</a>)
+          </span>
         </div>
-        <a
-          href="https://github.com/pithva007/RBTLAB"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold flex items-center gap-1.5 transition-colors"
-        >
-          <span>View on GitHub</span>
-          <ExternalLink size={13} />
-        </a>
+        <div className="flex items-center gap-2">
+          <a
+            href="https://khushpithva.in"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-3 py-1.5 rounded-lg bg-[#182136] hover:bg-[#202c47] text-blue-400 hover:text-blue-300 text-xs font-semibold flex items-center gap-1.5 border border-blue-500/20 transition-colors"
+          >
+            <span>khushpithva.in</span>
+            <ExternalLink size={13} />
+          </a>
+          <a
+            href="https://github.com/pithva007/RBTLAB"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold flex items-center gap-1.5 transition-colors"
+          >
+            <span>View on GitHub</span>
+            <ExternalLink size={13} />
+          </a>
+        </div>
       </div>
     </div>
   );
