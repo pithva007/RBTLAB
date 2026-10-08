@@ -1,0 +1,229 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 520" width="100%" height="auto" style="background: transparent; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+  <defs>
+    <!-- Background Gradient -->
+    <linearGradient id="cardBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0a0f1d"/>
+      <stop offset="50%" stop-color="#0e1626"/>
+      <stop offset="100%" stop-color="#0a0f1d"/>
+    </linearGradient>
+
+    <!-- Red Node Gradient -->
+    <linearGradient id="redNodeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ef4444"/>
+      <stop offset="100%" stop-color="#b91c1c"/>
+    </linearGradient>
+
+    <!-- Black Node Gradient -->
+    <linearGradient id="blackNodeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e293b"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+
+    <!-- NIL Node Gradient -->
+    <linearGradient id="nilNodeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f172a"/>
+      <stop offset="100%" stop-color="#020617"/>
+    </linearGradient>
+
+    <!-- Edge Gradient -->
+    <linearGradient id="edgeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#3b82f6"/>
+      <stop offset="100%" stop-color="#60a5fa"/>
+    </linearGradient>
+
+    <!-- Glow & Shadow Filters -->
+    <filter id="redGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#ef4444" flood-opacity="0.35"/>
+    </filter>
+    
+    <filter id="blackGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#38bdf8" flood-opacity="0.2"/>
+    </filter>
+
+    <filter id="pillShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#000000" flood-opacity="0.4"/>
+    </filter>
+  </defs>
+
+  <!-- Container Box -->
+  <rect x="10" y="10" width="940" height="500" rx="18" fill="url(#cardBg)" stroke="#1e293b" stroke-width="1.5"/>
+
+  <!-- Grid overlay lines for laboratory aesthetic -->
+  <g opacity="0.04" stroke="#ffffff" stroke-width="1">
+    <line x1="10" y1="80" x2="950" y2="80"/>
+    <line x1="10" y1="170" x2="950" y2="170"/>
+    <line x1="10" y1="270" x2="950" y2="270"/>
+    <line x1="10" y1="370" x2="950" y2="370"/>
+    <line x1="10" y1="450" x2="950" y2="450"/>
+  </g>
+
+  <!-- Header Banner -->
+  <g transform="translate(36, 42)">
+    <circle cx="8" cy="8" r="5" fill="#ef4444"/>
+    <text x="24" y="12" fill="#f8fafc" font-size="16" font-weight="700" letter-spacing="0.5">CANONICAL RED-BLACK TREE STATE</text>
+    <text x="320" y="12" fill="#64748b" font-size="12" font-family="'JetBrains Mono', monospace">| CLRS Chapter 13 Verified Model</text>
+    <rect x="740" y="-4" width="130" height="24" rx="12" fill="#0f172a" stroke="#22c55e" stroke-width="1"/>
+    <circle cx="754" cy="8" r="3.5" fill="#22c55e"/>
+    <text x="766" y="12" fill="#4ade80" font-size="11" font-weight="600" font-family="'JetBrains Mono', monospace">bh = 2 (VALID)</text>
+  </g>
+
+  <line x1="36" y1="64" x2="924" y2="64" stroke="#1e293b" stroke-width="1"/>
+
+  <!-- ==================== TREE EDGES ==================== -->
+  <g stroke="#334155" stroke-width="2.5" stroke-linecap="round">
+    <!-- Level 0 to Level 1 -->
+    <line x1="480" y1="120" x2="260" y2="205"/>
+    <line x1="480" y1="120" x2="700" y2="205"/>
+
+    <!-- Level 1 to Level 2 -->
+    <line x1="260" y1="205" x2="150" y2="295"/>
+    <line x1="260" y1="205" x2="370" y2="295"/>
+    <line x1="700" y1="205" x2="590" y2="295"/>
+    <line x1="700" y1="205" x2="810" y2="295"/>
+
+    <!-- Level 2 to NIL Sentinels (Dashed subtle) -->
+    <g stroke="#1e293b" stroke-width="1.5" stroke-dasharray="3,3">
+      <line x1="150" y1="295" x2="105" y2="375"/>
+      <line x1="150" y1="295" x2="195" y2="375"/>
+      <line x1="370" y1="295" x2="325" y2="375"/>
+      <line x1="370" y1="295" x2="415" y2="375"/>
+      <line x1="590" y1="295" x2="545" y2="375"/>
+      <line x1="590" y1="295" x2="635" y2="375"/>
+      <line x1="810" y1="295" x2="765" y2="375"/>
+      <line x1="810" y1="295" x2="855" y2="375"/>
+    </g>
+  </g>
+
+  <!-- ==================== NIL LEAVES (LEVEL 3) ==================== -->
+  <g font-family="'JetBrains Mono', monospace" font-size="10" font-weight="700" text-anchor="middle">
+    <!-- 8 NIL nodes -->
+    <g transform="translate(105, 375)">
+      <rect x="-18" y="-11" width="36" height="22" rx="6" fill="url(#nilNodeGrad)" stroke="#334155" stroke-width="1.2"/>
+      <text y="4" fill="#64748b">NIL</text>
+    </g>
+    <g transform="translate(195, 375)">
+      <rect x="-18" y="-11" width="36" height="22" rx="6" fill="url(#nilNodeGrad)" stroke="#334155" stroke-width="1.2"/>
+      <text y="4" fill="#64748b">NIL</text>
+    </g>
+    <g transform="translate(325, 375)">
+      <rect x="-18" y="-11" width="36" height="22" rx="6" fill="url(#nilNodeGrad)" stroke="#334155" stroke-width="1.2"/>
+      <text y="4" fill="#64748b">NIL</text>
+    </g>
+    <g transform="translate(415, 375)">
+      <rect x="-18" y="-11" width="36" height="22" rx="6" fill="url(#nilNodeGrad)" stroke="#334155" stroke-width="1.2"/>
+      <text y="4" fill="#64748b">NIL</text>
+    </g>
+    <g transform="translate(545, 375)">
+      <rect x="-18" y="-11" width="36" height="22" rx="6" fill="url(#nilNodeGrad)" stroke="#334155" stroke-width="1.2"/>
+      <text y="4" fill="#64748b">NIL</text>
+    </g>
+    <g transform="translate(635, 375)">
+      <rect x="-18" y="-11" width="36" height="22" rx="6" fill="url(#nilNodeGrad)" stroke="#334155" stroke-width="1.2"/>
+      <text y="4" fill="#64748b">NIL</text>
+    </g>
+    <g transform="translate(765, 375)">
+      <rect x="-18" y="-11" width="36" height="22" rx="6" fill="url(#nilNodeGrad)" stroke="#334155" stroke-width="1.2"/>
+      <text y="4" fill="#64748b">NIL</text>
+    </g>
+    <g transform="translate(855, 375)">
+      <rect x="-18" y="-11" width="36" height="22" rx="6" fill="url(#nilNodeGrad)" stroke="#334155" stroke-width="1.2"/>
+      <text y="4" fill="#64748b">NIL</text>
+    </g>
+  </g>
+
+  <!-- ==================== INTERNAL NODES (LEVEL 2: BLACK) ==================== -->
+  <!-- Node 12 -->
+  <g transform="translate(150, 295)" filter="url(#blackGlow)">
+    <circle cx="0" cy="0" r="23" fill="url(#blackNodeGrad)" stroke="#475569" stroke-width="2"/>
+    <text y="5" fill="#f8fafc" font-size="14" font-weight="700" text-anchor="middle" font-family="'JetBrains Mono', monospace">12</text>
+  </g>
+  <!-- Node 37 -->
+  <g transform="translate(370, 295)" filter="url(#blackGlow)">
+    <circle cx="0" cy="0" r="23" fill="url(#blackNodeGrad)" stroke="#475569" stroke-width="2"/>
+    <text y="5" fill="#f8fafc" font-size="14" font-weight="700" text-anchor="middle" font-family="'JetBrains Mono', monospace">37</text>
+  </g>
+  <!-- Node 62 -->
+  <g transform="translate(590, 295)" filter="url(#blackGlow)">
+    <circle cx="0" cy="0" r="23" fill="url(#blackNodeGrad)" stroke="#475569" stroke-width="2"/>
+    <text y="5" fill="#f8fafc" font-size="14" font-weight="700" text-anchor="middle" font-family="'JetBrains Mono', monospace">62</text>
+  </g>
+  <!-- Node 88 -->
+  <g transform="translate(810, 295)" filter="url(#blackGlow)">
+    <circle cx="0" cy="0" r="23" fill="url(#blackNodeGrad)" stroke="#475569" stroke-width="2"/>
+    <text y="5" fill="#f8fafc" font-size="14" font-weight="700" text-anchor="middle" font-family="'JetBrains Mono', monospace">88</text>
+  </g>
+
+  <!-- ==================== INTERNAL NODES (LEVEL 1: RED) ==================== -->
+  <!-- Node 25 -->
+  <g transform="translate(260, 205)" filter="url(#redGlow)">
+    <circle cx="0" cy="0" r="26" fill="url(#redNodeGrad)" stroke="#fca5a5" stroke-width="2.5"/>
+    <text y="5" fill="#ffffff" font-size="16" font-weight="700" text-anchor="middle" font-family="'JetBrains Mono', monospace">25</text>
+    <!-- Label badge -->
+    <rect x="-24" y="30" width="48" height="15" rx="7.5" fill="#450a0a" stroke="#ef4444" stroke-width="0.8"/>
+    <text y="41" fill="#fca5a5" font-size="8.5" font-weight="700" text-anchor="middle" font-family="'JetBrains Mono', monospace">RED</text>
+  </g>
+
+  <!-- Node 75 -->
+  <g transform="translate(700, 205)" filter="url(#redGlow)">
+    <circle cx="0" cy="0" r="26" fill="url(#redNodeGrad)" stroke="#fca5a5" stroke-width="2.5"/>
+    <text y="5" fill="#ffffff" font-size="16" font-weight="700" text-anchor="middle" font-family="'JetBrains Mono', monospace">75</text>
+    <!-- Label badge -->
+    <rect x="-24" y="30" width="48" height="15" rx="7.5" fill="#450a0a" stroke="#ef4444" stroke-width="0.8"/>
+    <text y="41" fill="#fca5a5" font-size="8.5" font-weight="700" text-anchor="middle" font-family="'JetBrains Mono', monospace">RED</text>
+  </g>
+
+  <!-- ==================== ROOT NODE (LEVEL 0: BLACK) ==================== -->
+  <!-- Node 50 -->
+  <g transform="translate(480, 120)" filter="url(#blackGlow)">
+    <circle cx="0" cy="0" r="29" fill="url(#blackNodeGrad)" stroke="#38bdf8" stroke-width="2.5"/>
+    <text y="6" fill="#f8fafc" font-size="18" font-weight="800" text-anchor="middle" font-family="'JetBrains Mono', monospace">50</text>
+    <!-- Root Badge -->
+    <rect x="-38" y="-45" width="76" height="18" rx="9" fill="#082f49" stroke="#38bdf8" stroke-width="1"/>
+    <text y="-32" fill="#7dd3fc" font-size="9" font-weight="700" text-anchor="middle" font-family="'JetBrains Mono', monospace">ROOT • BLACK</text>
+  </g>
+
+  <!-- ==================== INVARIANTS FOOTER BADGES ==================== -->
+  <line x1="36" y1="425" x2="924" y2="425" stroke="#1e293b" stroke-width="1"/>
+
+  <g transform="translate(36, 445)" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="11">
+    <!-- Property 1 -->
+    <g transform="translate(0, 0)">
+      <rect x="0" y="0" width="168" height="42" rx="8" fill="#111827" stroke="#1f2937" stroke-width="1"/>
+      <circle cx="16" cy="21" r="5" fill="#ef4444"/>
+      <text x="28" y="18" fill="#94a3b8" font-size="9.5" font-weight="700" text-transform="uppercase">Property 1</text>
+      <text x="28" y="32" fill="#e2e8f0" font-size="11" font-weight="600">Color is RED / BLACK</text>
+    </g>
+
+    <!-- Property 2 -->
+    <g transform="translate(180, 0)">
+      <rect x="0" y="0" width="168" height="42" rx="8" fill="#111827" stroke="#1f2937" stroke-width="1"/>
+      <circle cx="16" cy="21" r="5" fill="#38bdf8"/>
+      <text x="28" y="18" fill="#94a3b8" font-size="9.5" font-weight="700" text-transform="uppercase">Property 2</text>
+      <text x="28" y="32" fill="#e2e8f0" font-size="11" font-weight="600">Root Node is BLACK</text>
+    </g>
+
+    <!-- Property 3 -->
+    <g transform="translate(360, 0)">
+      <rect x="0" y="0" width="168" height="42" rx="8" fill="#111827" stroke="#1f2937" stroke-width="1"/>
+      <circle cx="16" cy="21" r="5" fill="#64748b"/>
+      <text x="28" y="18" fill="#94a3b8" font-size="9.5" font-weight="700" text-transform="uppercase">Property 3</text>
+      <text x="28" y="32" fill="#e2e8f0" font-size="11" font-weight="600">Leaves (NIL) are BLACK</text>
+    </g>
+
+    <!-- Property 4 -->
+    <g transform="translate(540, 0)">
+      <rect x="0" y="0" width="168" height="42" rx="8" fill="#111827" stroke="#1f2937" stroke-width="1"/>
+      <circle cx="16" cy="21" r="5" fill="#22c55e"/>
+      <text x="28" y="18" fill="#94a3b8" font-size="9.5" font-weight="700" text-transform="uppercase">Property 4</text>
+      <text x="28" y="32" fill="#e2e8f0" font-size="11" font-weight="600">No Double-Red Clash</text>
+    </g>
+
+    <!-- Property 5 -->
+    <g transform="translate(720, 0)">
+      <rect x="0" y="0" width="168" height="42" rx="8" fill="#111827" stroke="#1f2937" stroke-width="1"/>
+      <circle cx="16" cy="21" r="5" fill="#a855f7"/>
+      <text x="28" y="18" fill="#94a3b8" font-size="9.5" font-weight="700" text-transform="uppercase">Property 5</text>
+      <text x="28" y="32" fill="#e2e8f0" font-size="11" font-weight="600">Equal Black-Height (2)</text>
+    </g>
+  </g>
+</svg>

@@ -78,22 +78,61 @@ The laboratory is permanently hosted on Vercel with automated CI/CD:
 
 Every valid Red-Black Tree strictly adheres to the five fundamental properties outlined in Cormen, Leiserson, Rivest, and Stein (*Introduction to Algorithms*, Chapter 13):
 
-```
-       [ 50 (BLACK) ]               <-- Rule #2: Root is BLACK
-         /        \
-   [ 25 (RED) ]  [ 75 (RED) ]       <-- Rule #1: Every node is RED or BLACK
-     /      \      /      \
-  [12(B)] [37(B)][62(B)] [88(B)]    <-- Rule #4: No two consecutive REDs
-   /   \   /   \  /   \   /   \
-  NIL NIL NIL NILNIL NIL NIL NIL   <-- Rule #3: NIL leaves are BLACK
-                                   <-- Rule #5: Equal black-height along all simple paths (bh = 2)
+<div align="center">
+  <img src="assets/red-black-tree-invariants.svg" alt="Canonical Red-Black Tree Invariants State" width="100%" />
+</div>
+
+<br/>
+
+| Invariant | Property Name | Mathematical Axiom & Mechanical Purpose | Invariant Status |
+| :---: | :--- | :--- | :---: |
+| **P1** | **Node Color** | Every node is colored either **`RED`** or **`BLACK`** (stored in a single bit). | ✅ Valid |
+| **P2** | **Root Invariant** | The root node is always **`BLACK`**. Ensures black-height stability at the top. | ✅ Valid |
+| **P3** | **Leaf Invariant** | Every leaf sentinel (`NIL`) is **`BLACK`**. Provides well-defined baseline paths. | ✅ Valid |
+| **P4** | **Red Invariant** | If a node is **`RED`**, both its children must be **`BLACK`** (no two consecutive reds). | ✅ Valid |
+| **P5** | **Black-Height** | All simple downward paths to descendant leaves contain the **exact same number of black nodes** ($bh = 2$). | ✅ Valid |
+
+<br/>
+
+<details>
+<summary><b>🔍 View Interactive Mermaid Diagram (Graph Topology)</b></summary>
+
+```mermaid
+flowchart TD
+    classDef blackNode fill:#1e293b,stroke:#38bdf8,stroke-width:2.5px,color:#ffffff,font-weight:bold;
+    classDef redNode fill:#b91c1c,stroke:#ef4444,stroke-width:2.5px,color:#ffffff,font-weight:bold;
+    classDef nilNode fill:#020617,stroke:#334155,stroke-width:1.2px,color:#94a3b8,font-size:11px;
+
+    R["50<br/>⬛ BLACK (Root)"]:::blackNode
+    L1["25<br/>🔴 RED"]:::redNode
+    R1["75<br/>🔴 RED"]:::redNode
+    L2_1["12<br/>⬛ BLACK"]:::blackNode
+    L2_2["37<br/>⬛ BLACK"]:::blackNode
+    R2_1["62<br/>⬛ BLACK"]:::blackNode
+    R2_2["88<br/>⬛ BLACK"]:::blackNode
+
+    N1["NIL"]:::nilNode
+    N2["NIL"]:::nilNode
+    N3["NIL"]:::nilNode
+    N4["NIL"]:::nilNode
+    N5["NIL"]:::nilNode
+    N6["NIL"]:::nilNode
+    N7["NIL"]:::nilNode
+    N8["NIL"]:::nilNode
+
+    R --> L1
+    R --> R1
+    L1 --> L2_1
+    L1 --> L2_2
+    R1 --> R2_1
+    R1 --> R2_2
+    L2_1 --> N1 & N2
+    L2_2 --> N3 & N4
+    R2_1 --> N5 & N6
+    R2_2 --> N7 & N8
 ```
 
-1. **Property 1 (Node Color)**: Every node is either `RED` or `BLACK`.
-2. **Property 2 (Root Invariant)**: The root node is always `BLACK`.
-3. **Property 3 (Leaf Invariant)**: Every leaf (`NIL` sentinel) is `BLACK`.
-4. **Property 4 (Red Invariant / Double-Red Prohibition)**: If a node is `RED`, then both its children must be `BLACK`. In other words, no simple path can contain two consecutive `RED` nodes.
-5. **Property 5 (Black-Height Invariant)**: For each node, all simple downward paths from the node to descendant leaves contain the **exact same number of black nodes**.
+</details>
 
 ### Mathematical Height Guarantee
 From these 5 invariants, a Red-Black Tree containing $n$ internal nodes satisfies:
@@ -194,27 +233,16 @@ Explains where Red-Black Trees are actively used in production operating systems
 
 ### Tree Rotations (Left & Right)
 
-Rotations are fundamental $O(1)$ operations that change the local tree structure while strictly preserving the Binary Search Tree invariant ($Left < Root < Right$).
+Rotations are fundamental $O(1)$ operations that change the local tree topology while strictly preserving the Binary Search Tree invariant ($\alpha < x < \beta < y < \gamma$).
 
-#### Left Rotation at Node $x$:
-```
-       |                               |
-       x                               y
-      / \        LEFT-ROTATE(x)       / \
-     α   y      ───────────────>     x   γ
-        / \                         / \
-       β   γ                       α   β
-```
+<div align="center">
+  <img src="assets/rbt-rotations.svg" alt="Tree Rotations: LEFT-ROTATE(x) and RIGHT-ROTATE(y)" width="100%" />
+</div>
 
-#### Right Rotation at Node $y$:
-```
-         |                             |
-         y                             x
-        / \      RIGHT-ROTATE(y)      / \
-       x   γ    ───────────────>     α   y
-      / \                               / \
-     α   β                             β   γ
-```
+<br/>
+
+- **LEFT-ROTATE(x)**: Pivots node $y$ upward into $x$'s position. Subtree $\beta$ transfers to become the right child of $x$. Runs in $O(1)$ time requiring only 6 pointer updates.
+- **RIGHT-ROTATE(y)**: The exact inverse transformation of `LEFT-ROTATE`. Pivots node $x$ upward into $y$'s position. Subtree $\beta$ transfers to become the left child of $y$. Runs in $O(1)$ time.
 
 ---
 
